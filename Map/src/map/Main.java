@@ -4,6 +4,7 @@ package map;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JOptionPane;
 import javax.swing.event.MouseInputListener;
 
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -14,12 +15,14 @@ import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 import org.jxmapviewer.viewer.WaypointPainter;
+import waypoint.EventWaypoint;
 import waypoint.MyWaypoint;
 import waypoint.WaypointRender;
 
 public class Main extends javax.swing.JFrame {
 
     private final Set<MyWaypoint> waypoints = new HashSet<>();
+    private EventWaypoint event;
     
     public Main() {
         initComponents();
@@ -39,7 +42,7 @@ public class Main extends javax.swing.JFrame {
         jXMapViewer.addMouseListener(mMouse);
         jXMapViewer.addMouseMotionListener(mMouse);
         jXMapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCenter(jXMapViewer));
-
+        event=getEvent();
     }
      
     private void addWaypoint(MyWaypoint waypoint) {
@@ -65,6 +68,15 @@ public class Main extends javax.swing.JFrame {
         }
         waypoints.clear();
         initWaypoint();
+    }
+    
+    private EventWaypoint getEvent() {
+        return new EventWaypoint() {
+            @Override
+            public void selected(MyWaypoint waypoint) {
+                JOptionPane.showMessageDialog(Main.this, waypoint.getName());
+            }
+        };
     }
     
     @SuppressWarnings("unchecked")
@@ -141,7 +153,7 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmdAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddActionPerformed
-        addWaypoint(new MyWaypoint("Test 001", new GeoPosition(10.877637469612493, 106.80157667978177 )));
+        addWaypoint(new MyWaypoint("International University - VNU-HCM", event, new GeoPosition(10.877637469612493, 106.80157667978177 )));
         initWaypoint();
     }//GEN-LAST:event_cmdAddActionPerformed
 
