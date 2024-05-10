@@ -10,10 +10,10 @@ public class MyWaypoint extends DefaultWaypoint {
     private String name;
     private JButton button;
 
-    public MyWaypoint(String name,  GeoPosition coord) {
+    public MyWaypoint(String name, EventWaypoint event, GeoPosition coord) {
         super(coord);
         this.name = name;
-        initButton();
+        initButton(event);
     }
    
     public String getName() {
@@ -36,12 +36,12 @@ public class MyWaypoint extends DefaultWaypoint {
         
     }
     
-    private void initButton() {
+    private void initButton(EventWaypoint event) {
         button = new ButtonWaypoint();
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Click: " + name);
+                event.selected(MyWaypoint.this);
             }
         });
     }
