@@ -10,6 +10,6 @@ public class ButtonWaypoint extends JButton {
         setContentAreaFilled(false);
         setIcon(new ImageIcon(getClass().getResource("/icon/waypoint.png")));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
-        setSize(new Dimension(60, 60));
+        setSize(new Dimension(70, 70));
     }
 }
