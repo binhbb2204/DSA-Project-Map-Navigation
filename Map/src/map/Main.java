@@ -232,7 +232,7 @@ public class Main extends javax.swing.JFrame {
 
     private void menuEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEndActionPerformed
         GeoPosition geop = jXMapViewer.convertPointToGeoPosition(mousePosition);
-        MyWaypoint wayPoint = new MyWaypoint("Start Location", MyWaypoint.PointType.END, event, new GeoPosition(geop.getLatitude(), geop.getLongitude() ) );
+        MyWaypoint wayPoint = new MyWaypoint("End Location", MyWaypoint.PointType.END, event, new GeoPosition(geop.getLatitude(), geop.getLongitude() ) );
         addWaypoint(wayPoint);    
     }//GEN-LAST:event_menuEndActionPerformed
 
