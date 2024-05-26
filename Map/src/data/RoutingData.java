@@ -14,9 +14,6 @@ public class RoutingData {
         this.pointList = pointList;
     }
 
-    public RoutingData() {
-    }
-
     public double getDistance() {
         return distance;
     }
@@ -39,5 +36,14 @@ public class RoutingData {
 
     public void setPointList(PointList pointList) {
         this.pointList = pointList;
+    }
+    
+    @Override
+    public String toString() {
+        return "RoutingData{" +
+                "distance=" + distance +
+                ", turnDescription='" + turnDescription + '\'' +
+                ", pointList=" + pointList +
+                '}';
     }
 }

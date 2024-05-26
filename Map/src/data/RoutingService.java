@@ -26,54 +26,42 @@ public class RoutingService {
     }
 
     private RoutingService() {
-        hopper = createGraphHopperInstance("src\\files\\vietnam-latest.osm");
+        hopper = createGraphHopperInstance("src/files/vietnam-latest.osm");
     }
 
     private GraphHopper createGraphHopperInstance(String ghLoc) {
         GraphHopper graHopper = new GraphHopper();
         graHopper.setOSMFile(ghLoc);
-        // specify where to store graphhopper files
-        graHopper.setGraphHopperLocation("target/routing-graph-cache");
+        graHopper.setGraphHopperLocation("src/target/routing-graph-cache");
 
-        // see docs/core/profiles.md to learn more about profiles
+        // Configure profiles
         graHopper.setProfiles(new Profile("car").setVehicle("car").setWeighting("fastest").setTurnCosts(false));
-
-        // this enables speed mode for the profile we called car
         graHopper.getCHPreparationHandler().setCHProfiles(new CHProfile("car"));
 
-        // now this can take minutes if it imports or a few seconds for loading of course this is dependent on the area you import
+        // Import or load graph data
         graHopper.importOrLoad();
         return graHopper;
     }
 
     public List<RoutingData> routing(double fromLat, double fromLon, double toLat, double toLon) {
-        // simple configuration of the request object
-        GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).
-                // note that we have to specify which profile we are using even when there is only one like here
-                setProfile("car").
-                // define the language for the turn instructions
-                setLocale(Locale.US);
+        // Configure routing request
+        GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).setProfile("car").setLocale(Locale.US);
         GHResponse rsp = hopper.route(req);
 
-        // handle errors
+        // Handle routing errors
         if (rsp.hasErrors()) {
             throw new RuntimeException(rsp.getErrors().toString());
         }
 
-        // use the best path, see the GHResponse class for more possibilities.
+        // Extract routing data from response
         ResponsePath path = rsp.getBest();
-
-        // points, distance in meters and time in millis of the full path
         PointList pointList = path.getPoints();
-        double distance = path.getDistance();
-        long timeInMs = path.getTime();
-
         Translation tr = hopper.getTranslationMap().getWithFallBack(Locale.UK);
         InstructionList il = path.getInstructions();
-        // iterate over all turn instructions
+
+        // Create list of routing data
         List<RoutingData> list = new ArrayList<>();
         for (Instruction instruction : il) {
-            // System.out.println("distance " + instruction.getDistance() + " for instruction: " + instruction.getTurnDescription(tr));
             list.add(new RoutingData(instruction.getDistance(), instruction.getTurnDescription(tr), instruction.getPoints()));
         }
         return list;
