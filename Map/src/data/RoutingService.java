@@ -6,10 +6,14 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.ResponsePath;
 import com.graphhopper.config.CHProfile;
 import com.graphhopper.config.Profile;
+import com.graphhopper.routing.util.EdgeFilter;
+import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.util.Instruction;
 import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.Translation;
+import com.graphhopper.util.shapes.GHPoint;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -26,44 +30,49 @@ public class RoutingService {
     }
 
     private RoutingService() {
-        hopper = createGraphHopperInstance("src/files/vietnam-latest.osm");
+        hopper = createGraphHopperInstance("C:\\Users\\USER\\Desktop\\Projects\\DSA\\DSA-Project-Map-Navigation\\Map\\osm\\vietnam-latest.osm.pbf");
     }
 
     private GraphHopper createGraphHopperInstance(String ghLoc) {
         GraphHopper graHopper = new GraphHopper();
         graHopper.setOSMFile(ghLoc);
-        graHopper.setGraphHopperLocation("src/target/routing-graph-cache");
-
-        // Configure profiles
+        graHopper.setGraphHopperLocation("C:\\Users\\USER\\Desktop\\Projects\\DSA\\DSA-Project-Map-Navigation\\Map\\target\\routing-graph-cache");
         graHopper.setProfiles(new Profile("car").setVehicle("car").setWeighting("fastest").setTurnCosts(false));
         graHopper.getCHPreparationHandler().setCHProfiles(new CHProfile("car"));
-
-        // Import or load graph data
+        graHopper.setGraphHopperLocation("target/routing-graph-cache");
         graHopper.importOrLoad();
         return graHopper;
     }
 
     public List<RoutingData> routing(double fromLat, double fromLon, double toLat, double toLon) {
-        // Configure routing request
-        GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).setProfile("car").setLocale(Locale.US);
+        System.out.println("Routing from " + fromLat + ", " + fromLon + " to " + toLat + ", " + toLon);
+
+        GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).
+                setProfile("car").
+                setLocale(Locale.US);
         GHResponse rsp = hopper.route(req);
 
-        // Handle routing errors
         if (rsp.hasErrors()) {
             throw new RuntimeException(rsp.getErrors().toString());
         }
-
-        // Extract routing data from response
+        // use the best path, see the GHResponse class for more possibilities.
         ResponsePath path = rsp.getBest();
+
+        // points, distance in meters and time in millis of the full path
         PointList pointList = path.getPoints();
+        double distance = path.getDistance();
+        long timeInMs = path.getTime();
+
         Translation tr = hopper.getTranslationMap().getWithFallBack(Locale.UK);
         InstructionList il = path.getInstructions();
-
-        // Create list of routing data
+        // iterate over all turn instructions
         List<RoutingData> list = new ArrayList<>();
         for (Instruction instruction : il) {
+            // System.out.println("distance " + instruction.getDistance() + " for instruction: " + instruction.getTurnDescription(tr));
             list.add(new RoutingData(instruction.getDistance(), instruction.getTurnDescription(tr), instruction.getPoints()));
         }
+        System.out.println("Routing completed successfully");
+
         return list;
     }
 }

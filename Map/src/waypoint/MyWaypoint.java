@@ -16,11 +16,10 @@ public class MyWaypoint extends DefaultWaypoint {
         super(coord);
         this.name = name;
         this.pointType = pointType;
-        this.event = event;
-        initButton();
+        initButton(event);
     }
 
-    private void initButton() {
+    private void initButton(EventWaypoint event) {
         button = new ButtonWaypoint();
         button.addActionListener(new ActionListener() {
             @Override

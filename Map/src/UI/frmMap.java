@@ -1,6 +1,7 @@
 package UI;
 
-import data.*;
+import data.RoutingData;
+import data.RoutingService;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,7 +24,6 @@ import waypoint.MyWaypoint;
 import waypoint.WaypointRender;
 import worker.*;
 
-
 public class frmMap extends javax.swing.JFrame {
 
     private final Set<MyWaypoint> waypoints = new HashSet<>();
@@ -33,6 +33,10 @@ public class frmMap extends javax.swing.JFrame {
     private boolean routingInProgress = false; // New field to track routing progress
 
     public frmMap() {
+        setTitle("Map Navigation");
+        setSize(1000,500);
+        setLocationRelativeTo(null);
+        setLocation(200,200);
         initComponents();
         init();
     }
@@ -54,10 +58,10 @@ public class frmMap extends javax.swing.JFrame {
     }
 
     private void addWaypoint(MyWaypoint waypoint) {
-        for (MyWaypoint d : waypoints) {
+        for(MyWaypoint d: waypoints) {
             jXMapViewer.remove(d.getButton());
         }
-        Iterator<MyWaypoint> iter = waypoints.iterator();
+        Iterator<MyWaypoint>  iter = waypoints.iterator();
         while (iter.hasNext()) {
             if (iter.next().getPointType() == waypoint.getPointType()) {
                 iter.remove();
@@ -67,29 +71,30 @@ public class frmMap extends javax.swing.JFrame {
         initWaypoint();
     }
 
-    private void initWaypoint() {
+    private void initWaypoint(){
         WaypointPainter<MyWaypoint> wp = new WaypointRender();
         wp.setWaypoints(waypoints);
         jXMapViewer.setOverlayPainter(wp);
-        for (MyWaypoint d : waypoints) {
+        for(MyWaypoint d:waypoints) {
             jXMapViewer.add(d.getButton());
         }
-        //  Routing Data
-        if (waypoints.size() == 2) {
+        // Routing Data
+        if (waypoints. size() == 2) {
             GeoPosition start = null;
             GeoPosition end = null;
-            for (MyWaypoint w : waypoints) {
+            for (MyWaypoint w:waypoints) {
                 if (w.getPointType() == MyWaypoint.PointType.START) {
                     start = w.getPosition();
-                } else if (w.getPointType() == MyWaypoint.PointType.END) {
+                }
+                else if (w.getPointType() == MyWaypoint.PointType.END) {
                     end = w.getPosition();
                 }
             }
             if (start != null && end != null) {
-                routingData = RoutingService.getInstance().routing(start.getLatitude(),
-                        start.getLongitude(), end.getLatitude(), end.getLongitude());
-
-            } else {
+                routingData = RoutingService.getInstance().routing(start.getLatitude(), start.getLongitude(),end.getLatitude(), end.getLongitude());
+                
+            }
+            else {
                 routingData.clear();
             }
             jXMapViewer.setRoutingData(routingData);
@@ -97,14 +102,14 @@ public class frmMap extends javax.swing.JFrame {
     }
 
     private void clearWaypoint() {
-        for (MyWaypoint d : waypoints) {
+        for (MyWaypoint d:waypoints) {
             jXMapViewer.remove(d.getButton());
         }
         routingData.clear();
         waypoints.clear();
         initWaypoint();
     }
-
+    
     private EventWaypoint getEvent() {
         return new EventWaypoint() {
             @Override
@@ -233,6 +238,7 @@ public class frmMap extends javax.swing.JFrame {
         if (waypoints.size() == 2) {
             performRouting();
         }
+        System.out.println(wayPoint.getName());
     }//GEN-LAST:event_menuStartActionPerformed
 
     private void menuEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEndActionPerformed
@@ -243,43 +249,55 @@ public class frmMap extends javax.swing.JFrame {
         // New code to trigger routing when both start and end points are selected
         if (waypoints.size() == 2) {
             performRouting();
-        }
+        }  
+        System.out.println(wayPoint.getName());
     }//GEN-LAST:event_menuEndActionPerformed
     
-    public void setRoutingInProgress(boolean inProgress) {
-        this.routingInProgress = inProgress;
+    public void setRoutingInProgress(boolean routingInProgress) {
+        this.routingInProgress = routingInProgress;
     }
-    
-   private void performRouting() {
-        // Extract start and end positions from waypoints
-        GeoPosition start = null;
-        GeoPosition end = null;
-        for (MyWaypoint w : waypoints) {
-            if (w.getPointType() == MyWaypoint.PointType.START) {
-                start = w.getPosition();
-            } else if (w.getPointType() == MyWaypoint.PointType.END) {
-                end = w.getPosition();
+
+    public boolean isRoutingInProgress() {
+        return routingInProgress;
+    }
+    private void performRouting() {
+            if (!routingInProgress) {
+                // Get the start and end positions for routing
+                GeoPosition start = null;
+                GeoPosition end = null;
+                for (MyWaypoint w : waypoints) {
+                    if (w.getPointType() == MyWaypoint.PointType.START) {
+                        start = w.getPosition();
+                    } else if (w.getPointType() == MyWaypoint.PointType.END) {
+                        end = w.getPosition();
+                    }
+                }
+
+                if (start != null && end != null) {
+                    // Start routing in a SwingWorker
+                    Worker worker = new Worker(start, end, this);
+                    worker.execute();
+                }
             }
         }
-
-        // Create and execute the Worker to perform routing asynchronously
-        Worker worker = new Worker(start.getLatitude(), start.getLongitude(), end.getLatitude(), end.getLongitude(), this);
-        worker.execute();
-    }
-
-// Method to update the GUI with routing data
+   
     public void updateRouting(List<RoutingData> routingData) {
+        System.out.println("Updating GUI with routing data");
+        
         this.routingData = routingData;
         jXMapViewer.setRoutingData(routingData);
+        
+        System.out.println("GUI update completed");
     }
 
     public static void main(String args[]) {
-        
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new frmMap().setVisible(true);
             }
         });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

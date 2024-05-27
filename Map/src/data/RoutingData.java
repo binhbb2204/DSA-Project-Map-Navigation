@@ -37,7 +37,8 @@ public class RoutingData {
     public void setPointList(PointList pointList) {
         this.pointList = pointList;
     }
-    
+    public RoutingData() {
+    }    
     @Override
     public String toString() {
         return "RoutingData{" +

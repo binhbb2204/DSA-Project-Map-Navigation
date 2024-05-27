@@ -2,49 +2,36 @@ package worker;
 
 import javax.swing.SwingWorker;
 import UI.frmMap;
-import data.RoutingData;
-import data.RoutingService;
-import java.util.List;
+import org.jxmapviewer.viewer.GeoPosition;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import data.*;
 
-public class Worker extends SwingWorker<Void, Void> {
-    private final double fromLat;
-    private final double fromLon;
-    private final double toLat;
-    private final double toLon;
-    private final frmMap instance;
+public class Worker extends SwingWorker<List<RoutingData>, Void> {
+        private final GeoPosition start;
+        private final GeoPosition end;
+        private final frmMap main;
 
-    public Worker(double fromLat, double fromLon, double toLat, double toLon, frmMap frmMapInstance) {
-        this.fromLat = fromLat;
-        this.fromLon = fromLon;
-        this.toLat = toLat;
-        this.toLon = toLon;
-        this.instance = frmMapInstance;
-    }
-
-    @Override
-    protected Void doInBackground() {
-        try {
-            instance.setRoutingInProgress(true); // Set flag to indicate routing is in progress
-            List<RoutingData> routingData = RoutingService.getInstance().routing(fromLat, fromLon, toLat, toLon);
-            instance.updateRouting(routingData); // Update GUI with routing data
-        } catch (Exception e) {
-            // Handle routing failure
-            e.printStackTrace(); // Log the exception or display an error message
-        } finally {
-            instance.setRoutingInProgress(false); // Set flag to indicate routing is complete
+        public Worker(GeoPosition start, GeoPosition end, frmMap main) {
+            this.start = start;
+            this.end = end;
+            this.main = main;
         }
-        return null;
-    }
 
-
-
-    @Override
-    protected void done() {
-        try {
-            get(); // Ensure that doInBackground() is completed
-        } catch (InterruptedException | ExecutionException ex) {
-            ex.printStackTrace(); // Handle exceptions
+        @Override
+        protected List<RoutingData> doInBackground() throws Exception {
+            main.setRoutingInProgress(true); // Set flag to indicate routing is in progress
+            return RoutingService.getInstance().routing(start.getLatitude(), start.getLongitude(), end.getLatitude(), end.getLongitude());
         }
-    }
+
+        @Override
+        protected void done() {
+            main.setRoutingInProgress(false); // Set flag to indicate routing is complete
+            try {
+                List<RoutingData> result = get(); // Retrieve routing data from doInBackground()
+                main.updateRouting(result); // Update GUI with routing results
+            } catch (InterruptedException | ExecutionException ex) {
+                ex.printStackTrace(); // Handle exceptions
+            }
+        }
 }
