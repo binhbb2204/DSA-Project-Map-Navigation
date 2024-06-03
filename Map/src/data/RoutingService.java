@@ -6,8 +6,6 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.ResponsePath;
 import com.graphhopper.config.CHProfile;
 import com.graphhopper.config.Profile;
-import com.graphhopper.routing.util.EdgeFilter;
-import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.util.Instruction;
 import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.PointList;
@@ -30,13 +28,13 @@ public class RoutingService {
     }
 
     private RoutingService() {
-        hopper = createGraphHopperInstance("C:\\Users\\USER\\Desktop\\Projects\\DSA\\DSA-Project-Map-Navigation\\Map\\osm\\vietnam-latest.osm.pbf");
+        hopper = createGraphHopperInstance("osm file/vietnam-latest.osm.pbf"); // Update this line with the correct path
     }
 
     private GraphHopper createGraphHopperInstance(String ghLoc) {
         GraphHopper graHopper = new GraphHopper();
         graHopper.setOSMFile(ghLoc);
-        graHopper.setGraphHopperLocation("C:\\Users\\USER\\Desktop\\Projects\\DSA\\DSA-Project-Map-Navigation\\Map\\target\\routing-graph-cache");
+        graHopper.setGraphHopperLocation("target/routing-graph-cache");
         graHopper.setProfiles(new Profile("car").setVehicle("car").setWeighting("fastest").setTurnCosts(false));
         graHopper.getCHPreparationHandler().setCHProfiles(new CHProfile("car"));
         graHopper.setGraphHopperLocation("target/routing-graph-cache");
