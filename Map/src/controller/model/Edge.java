@@ -1,4 +1,4 @@
-package model;
+package controller.model;
 
 public class Edge implements IEdge {
     private INode nodeA;

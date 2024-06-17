@@ -1,8 +1,8 @@
-package matrix;
+package controller.matrix;
 
-import model.ICostEvaluator;
-import model.IEdge;
-import model.INode;
+import controller.model.ICostEvaluator;
+import controller.model.IEdge;
+import controller.model.INode;
 
 public class AStarCostEvaluator implements ICostEvaluator {
     volatile boolean enabled = true;

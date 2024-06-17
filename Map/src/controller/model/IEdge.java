@@ -1,4 +1,4 @@
-package model;
+package controller.model;
 
 public interface IEdge {
     INode getNodeA(); //Return node A

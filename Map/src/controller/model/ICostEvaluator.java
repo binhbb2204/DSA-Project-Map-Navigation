@@ -1,4 +1,4 @@
-package model;
+package controller.model;
 
 public interface ICostEvaluator {
     int evaluateWeight(IEdge edge);

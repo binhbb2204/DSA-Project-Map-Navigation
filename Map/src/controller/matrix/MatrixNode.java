@@ -1,15 +1,6 @@
-/*
- * Author:       Thái Quang Tính
- * Created on    17-06-2024
- * GitHub:       https://github.com/notrealqt
- * Email:        tinhthai2000@gmail.com
- * Description:  [Brief description of the file or project]
-*/
+package controller.matrix;
 
-
-package matrix;
-
-import model.Node;
+import controller.model.Node;
 
 public class MatrixNode extends Node{
     private boolean enabled = true;

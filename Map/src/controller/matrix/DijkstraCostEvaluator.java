@@ -1,6 +1,6 @@
-package matrix;
+package controller.matrix;
 
-import model.INode;
+import controller.model.INode;
 
 // Dijkstra and A* are one but A* has heuristic so just reuse the algo from AStar but return 0 on the heuristic method
 public class DijkstraCostEvaluator extends AStarCostEvaluator{

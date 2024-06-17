@@ -1,8 +1,9 @@
-package util;
+package controller.util;
 
 import java.util.*;
 
 public class BinaryHeap<E> {
+
     /*
     * A binary heap is a priority queue, it is only interested in the one
     * with the highest priority, i.e., the first element (at index 1, as
@@ -11,6 +12,7 @@ public class BinaryHeap<E> {
     * the comparator. The elements after the first one may not be in a
     * sorted order, ascending, or descending, depending on the comparator.
     */
+    
     Comparator<E> comparator;
     Object[] array = new Object[8];
     int size;

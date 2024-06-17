@@ -1,4 +1,4 @@
-package model;
+package controller.model;
 
 public class AStarPathAlgorithm implements IPathAlgorithm{
     private ICostEvaluator evaluator;
